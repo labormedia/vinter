@@ -1,0 +1,23 @@
+{
+  "name": "vinter",
+  "version": "1.0.0",
+  "description": "Vinter is a web service platform for interaction and performance.",
+  "main": "index.js",
+  "scripts": {
+    "test": "http-server src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labormedia/vinter.git"
+  },
+  "keywords": [
+    "webmidi",
+    "webgl"
+  ],
+  "author": "Diego Correa T.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/labormedia/vinter/issues"
+  },
+  "homepage": "https://github.com/labormedia/vinter#readme"
+}
