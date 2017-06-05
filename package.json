@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/labormedia/vinter/issues"
   },
-  "homepage": "https://github.com/labormedia/vinter#readme"
+  "homepage": "https://github.com/labormedia/vinter#readme",
+  "devDependencies": {
+    "http-server": "^0.10.0"
+  }
 }

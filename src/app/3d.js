@@ -12,7 +12,10 @@ var ThreeDemo = {
 	windowHalfY: window.innerHeight / 2,
 	renderer: null,
 	camera: null,
+	tanFOV: null,
 	scene: null,
+	container: (function() { return document.querySelector('.app')})(),
+	innerHeight : (function() { return window.innerHeight })(),
 	headerSize: 350,
 
 	xMod: 0, // Connection to the riot UI
@@ -21,19 +24,23 @@ var ThreeDemo = {
 
 	init: function() {
 		var container, separation = 100, amountX = 50, amountY = 50,
-		particles, particle,
-		container = document.querySelector('.app');
+		particles, particle;
+		// container = document.querySelector('.app');
 
 		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 		this.camera.position.z = 100;
+
+		this.tanFOV = Math.tan( ( ( Math.PI / 180 ) * this.camera.fov / 2 ) );
 
 		this.scene = new THREE.Scene();
 		this.scene.fog = new THREE.Fog( 0x000000, 1, 1000 );
 
 		this.renderer = new THREE.WebGLRenderer({ antialias: true });
 		this.renderer.setPixelRatio( window.devicePixelRatio );
-		this.renderer.setSize( container.offsetWidth, window.innerHeight-this.headerSize );
-		container.appendChild( this.renderer.domElement );
+		this.renderer.setSize( this.container.offsetWidth, window.innerHeight-this.headerSize );
+		this.container.appendChild( this.renderer.domElement );
+
+		this.container.addEventListener('dblclick', this.fullscreen, false);
 
 		// particles
 		var PI2 = Math.PI * 2;
@@ -73,10 +80,50 @@ var ThreeDemo = {
 	},
 
 	onWindowResize: function() {
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
-		this.renderer.setSize( container.offsetWidth, window.innerHeight-this.headerSize );
+		// console.log(window.innerWidth / window.innerHeight);
+			ThreeDemo.camera.aspect = 1;
+		// ThreeDemo.camera.fov = ( 360 / Math.PI ) * Math.atan( ThreeDemo.tanFOV * ( window.innerHeight / window.innerHeight ) );
+
+		if (!isfullscreen) {
+			var canvas = document.getElementsByTagName('canvas');
+			// if (canvas) canvas[0].parentElement.removeChild(canvas[0]);
+
+			canvas[0].setAttribute("style", "position: static;");
+			ThreeDemo.camera.aspect = window.innerWidth / window.innerHeight;
+			ThreeDemo.camera.updateProjectionMatrix();
+			ThreeDemo.renderer.setSize( ThreeDemo.container.offsetWidth, ThreeDemo.container.offsetHeight ); 
+		} else {
+			var canvas = document.getElementsByTagName('canvas');
+			// if (canvas) canvas[0].parentElement.removeChild(canvas[0]);
+
+			canvas[0].setAttribute("style", "position:absolute; display:block; top:0; left: 0 ;width:100%;height:100%; z-index:1000;");
+			ThreeDemo.camera.aspect = canvas[0].offsetWidth / canvas[0].offsetHeight;
+			ThreeDemo.camera.updateProjectionMatrix();
+			ThreeDemo.renderer.setSize( canvas[0].offsetWidth, canvas[0].offsetHeight );
+		}
+
 	},
+
+	fullscreen: function () {
+		// console.log(ThreeDemo.container);
+		var canvas = document.getElementsByTagName('canvas');
+		if (ThreeDemo.isfullscreen == 0) {
+			// ThreeDemo.renderer.setSize(100,100);
+
+			// if (canvas) canvas[0].parentElement.removeChild(canvas[0]);
+			canvas[0].setAttribute("style", "position:absolute; display:block; top:0; left: 0 ;width:100%;height:100%; z-index:1000;");
+			ThreeDemo.renderer.setSize( canvas[0].offsetWidth, canvas[0].offsetHeight );
+		} else {
+				canvas[0].setAttribute("style", "position: static;");
+				ThreeDemo.renderer.setSize( ThreeDemo.container.offsetWidth, ThreeDemo.container.offsetHeight+500);
+		}
+		ThreeDemo.onWindowResize;
+		ThreeDemo.isfullscreen = !ThreeDemo.isfullscreen;
+		// console.log(ThreeDemo.isfullscreen)
+		console.log(ThreeDemo.innerHeight)
+	},
+
+	isfullscreen: false,
 
 	animate: function() {
 		requestAnimationFrame( this.animate.bind(this) );
